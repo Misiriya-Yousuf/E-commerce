@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/account.css' %}">
+    <link rel="icon" href="{% static 'images/fevicon/fevicon.png' %}" type="image/gif" />
+    <title>Official | website | Signature-Seconds</title>
+    <style>
+        .error-messages {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+        
+        .error-messages p {
+            color: #512da8;
+            background: #fff;
+            padding: 10px;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="form-container sign-in">
+            <form  method="POST" action="{% url 'signin' %}" autocomplete="off">
+                {% csrf_token %}
+                <h1>Sign In</h1>
+                <div class="social-icons">
+                    <a href="#" class="icon">
+                        <i class="fa-brands fa-google-plus-g"></i>
+                    </a>
+                    <a href="#" class="icon">
+                        <i class="fa-brands fa-facebook"></i>
+                    </a>
+                    <a href="#" class="icon">
+                        <i class="fa-brands fa-github"></i>
+                    </a>
+                    <a href="#" class="icon">
+                        <i class="fa-brands fa-linkedin-in"></i>
+                    </a>
+                </div>
+                <input type="text" placeholder="username" name="username" >
+                <input type="password" placeholder="password" name="password">
+                <a  href="#" style="font-weight:bold;">Forgot password ?</a>
+                <button>Sign In</button>
+                {% if messages %}
+                    <ul class="error-messages">
+                        {% for message in messages %}
+                            <p class="{{ message.tags }}" style="font-weight:500;">{{ message }}</p>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </form>
+        </div>
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-right">
+                    <h1>Hello Friend !</h1>
+                    <p>Register with your personal details to explore our website features</p>
+                    <button class="hidden" id="register">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+    <script>
+        const registerButton = document.getElementById('register');
+        registerButton.addEventListener('click', function() {
+          window.location.href = '/signup'; 
+        });
+      </script>
+</html>

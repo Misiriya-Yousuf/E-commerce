@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/account.css' %}">
+    <link rel="icon" href="{% static 'images/fevicon/fevicon.png' %}" type="image/gif" />
+    <title>Official | website | Signature-Seconds</title>
+    <style>
+        .error {
+            color: red;
+            font-size: 0.9em;
+        }
+        .otp-section {
+            display: none;
+        }
+        .timer {
+            font-size: 1.5em;
+            color: #d9534f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="form-container sign-in">
+            <form method="POST" autocomplete="on">
+                {% csrf_token %}
+                <h2 class="mb-4">OTP Verification</h2>
+                <br>
+                {{ form.otp_code }}
+                <small class="error">{{ form.otp_code.errors.as_text }}</small>
+                <p class="timer" id="timer"></p>
+                <p>Need a new OTP? <a href="{% url 'resend' user_id=user.id %}" style="text-decoration: none;">Resend OTP</a></p>
+                <button type="submit">Activate</button>
+
+                
+
+                {% if messages %}
+                    <ul class="error-messages">
+                        {% for message in messages %}
+                            <p class="{{ message.tags }}" style="font-weight:500;">{{ message }}</p>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </form>
+        </div>
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-right">
+                    <h1>Verify OTP!</h1>
+                    <p>An OTP was sent to your registered email. Enter the OTP here to activate your account.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Get the expiration time of OTP passed from the Django view
+        const otpExpiresAt = new Date("{{ otp_expires_at }}").getTime();  // Use the ISO string directly
+        
+        console.log("OTP expiration time:", otpExpiresAt);  // Check the expiration time output
+        
+        // Timer function
+        const countdownTimer = setInterval(function() {
+            const now = new Date().getTime();  // Current time
+            const timeRemaining = otpExpiresAt - now;  // Remaining time in milliseconds
+    
+            // Calculate minutes and seconds
+            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+    
+            // Display the timer
+            document.getElementById("timer").innerHTML = `Time remaining: ${minutes}m ${seconds}s`;
+    
+            // If the countdown finishes, clear the interval and notify the user
+            if (timeRemaining < 0) {
+                clearInterval(countdownTimer);
+                document.getElementById("timer").innerHTML = "OTP has expired.";
+            }
+        }, 1000);  // Update every second
+    </script>
+    
+</body>
+</html>

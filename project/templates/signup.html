@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/account.css' %}">
+    <link rel="icon" href="{% static 'images/fevicon/fevicon.png' %}" type="image/gif" />
+    <title>Official | website | Signature-Seconds</title>
+    <style>
+        .error {
+            color: red;
+            font-size: 0.9em;
+        }
+        .otp-section {
+            display: none;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="form-container sign-in">
+            <form  method="POST" autocomplete="on">
+                {% csrf_token %}
+                <h4>Register User</h4>
+                <div class="social-icons">
+                    <a href="#" class="icon">
+                        <i class="fa-brands fa-google-plus-g"></i>
+                    </a>
+                    <a href="#" class="icon">
+                        <i class="fa-brands fa-facebook"></i>
+                    </a>
+                    <a href="#" class="icon">
+                        <i class="fa-brands fa-github"></i>
+                    </a>
+                    <a href="#" class="icon">
+                        <i class="fa-brands fa-linkedin-in"></i>
+                    </a>
+                </div>
+                
+                    {{ form.username }}
+                    <small class="error">{{ form.username.errors.as_text }}</small>
+                
+                
+                    {{ form.email }}
+                    <small class="error">{{ form.email.errors.as_text }}</small>
+
+                    {{ form.password1 }}
+                    <small class="error">{{ form.password1.errors.as_text }}</small>
+                
+                    {{ form.password2 }}
+                    <small class="error">{{ form.password2.errors.as_text }}</small>
+                    
+                <button type="submit">Sign up</button>
+                {% if messages %}
+                    <ul class="error-messages">
+                        {% for message in messages %}
+                            <p class="{{ message.tags }}" style="font-weight:500;">{{ message }}</p>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </form>
+        </div>
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-right">
+                    <h1>Welcome Back !</h1>
+                    <p> Enter the details to explore all the website features </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+</html>

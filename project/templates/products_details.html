@@ -1,0 +1,201 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details</title>
+  <!-- Bootstrap and Font Awesome -->
+  <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+  <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet">
+  <link 
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" 
+    rel="stylesheet">
+  <style>
+    .footer {
+        background-color: #343a40;
+        color: white;
+        padding: 40px 0;
+      }
+      .footer a {
+        color: #adb5bd;
+        text-decoration: none;
+      }
+      .footer a:hover {
+        color: white;
+      }
+      .social-icons a {
+        font-size: 1.5rem;
+        margin: 0 10px;
+      }
+      .newsletter-input {
+        max-width: 400px;
+      }
+    .product-container {
+      margin-top: 50px;
+    }
+
+    .small-img-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .small-img-col img {
+      cursor: pointer;
+      border: 1px solid #ddd;
+      padding: 5px;
+      border-radius: 5px;
+    }
+
+    .product-details {
+      padding: 20px;
+    }
+
+    .btn-cart {
+      background-color: #5cb85c;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .btn-cart:hover {
+      background-color: #4cae4c;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header_section">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light p-0">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <span style="font-size: 18px; margin-left:8px;  color: purple;">Signature Seconds</span>
+        </a>
+        <div class="mx-auto text-center" style="position: absolute; left: 50%; transform: translateX(-50%);">
+          {% if messages %}
+              <div class="error-messages">
+                  {% for message in messages %}
+                      <h6 class="{{ message.tags }}" style="margin: 0; color: green;">{{ message }}</h6>
+                  {% endfor %}
+              </div>
+          {% endif %}
+      </div>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item ">
+                    <a class="nav-link" href="{% url 'home' %}"><b>Home</b></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'products' %}"><b>Products</b></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <b>Cart</b><i class="fa fa-shopping-cart ml-1" aria-hidden="true"style="font-size: 12px; height: 12px;"></i>
+                    </a>
+                </li>
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'signout' %}"><b>signout</b><i class="fa-solid fa-power-off ml-1" style="font-size: 12px; height: 12px;"></i></a>
+              </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+</header>
+
+  <!-- Product Details Section -->
+  <div class="container product-container">
+    <div class="row">
+      <div class="col-md-2">
+        <img id="ProductImg" src="{% static 'images/w1.png' %}" alt="Product Image" width="100%">
+        <div class="small-img-row">
+          <div class="small-img-col">
+            <img src="{% static 'images/w1.png' %}" width="100%" onclick="changeImage(this)">
+          </div>
+          <div class="small-img-col">
+            <img src="{% static 'images/w2.png' %}" width="100%" onclick="changeImage(this)">
+          </div>
+          <div class="small-img-col">
+            <img src="{% static 'images/w3.png' %}" width="100%" onclick="changeImage(this)">
+          </div>
+          <div class="small-img-col">
+            <img src="{% static 'images/w4.png' %}" width="100%" onclick="changeImage(this)">
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 product-details">
+        <p>Home / Watches</p>
+        <h1>Stylish Men's Watch</h1>
+        <h4>$300</h4>
+        <select class="form-select w-50 my-3">
+          <option>Select Size</option>
+          <option>Small</option>
+          <option>Medium</option>
+          <option>Large</option>
+        </select>
+        <input type="number" value="1" class="form-control w-50 mb-3">
+        <a href="#" class="btn-cart" style="text-decoration: none;">Add To Cart</a>
+        <h3 class="mt-4">Product Details</h3>
+        <p>Elevate your style with our premium men's watch. Perfect for formal or casual settings, this watch is designed for modern men who value style and functionality.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+        <!-- About Section -->
+        <div class="col-md-4">
+          <h5>About</h5>
+          <p>Signature Seconds is an online men's wristwatch store specializing in premium, stylish, and functional wrist watches.</p>
+        </div>
+        
+        <!-- Contact Section -->
+        <div class="col-md-4">
+          <h5>Contact</h5>
+          <p>Email: contact@example.com</p>
+          <p>Phone: +123 456 7890</p>
+          <div class="social-icons">
+            <a href="#" class="text-light"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="text-light"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="text-light"><i class="fab fa-twitter"></i></a>
+          </div>
+        </div>
+        
+        <!-- Newsletter Section -->
+        <div class="col-md-4">
+          <h5>Newsletter</h5>
+          <p>Subscribe to our newsletter for updates.</p>
+          <form>
+            <div class="mb-3">
+              <input type="email" class="form-control newsletter-input" placeholder="Enter your email" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Subscribe</button>
+          </form>
+        </div>
+      </div>
+      
+      <div class="text-center mt-4">
+        
+      </div>
+      <div class="container">
+        <p>
+          &copy; <span id="displayYear"></span> All Rights Reserved By
+          <a href="{% static 'https://html.design/' %}"><b>Signature Seconds</b></a>
+        </p>
+      </div>
+    </div>
+  </footer>
+  <!-- JavaScript -->
+  <script>
+    function changeImage(smallImg) {
+      document.getElementById("ProductImg").src = smallImg.src;
+    }
+  </script>
+</body>
+
+</html>

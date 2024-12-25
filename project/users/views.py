@@ -10,34 +10,46 @@ from . forms import RegisterForm,OtpVerificationForm,ResendOtpForm
 from . models import OtpToken
 from django.contrib.auth import get_user_model
 
-
-
-
-
 # Create your views here.
 
 @never_cache
 def signin_view(request):
     if request.user.is_authenticated:
         return redirect('home')
+    
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        user = authenticate(request,username=username,password=password)
+        
+        # Authenticate the user
+        user = authenticate(request, username=username, password=password)
+        
         if user is not None:
-            login(request,user)
-            messages.success(request,(f"Welcome {user.username}, let's get started !!!"))
-            return redirect('home')
+            if user.is_superuser:  # Check if the user is an admin (superuser)
+                login(request, user)
+                return redirect('dashboard')
+            else:
+                login(request, user)
+                messages.success(request, f"Welcome {user.username}, let's get started !!!")
+                return redirect('home')
         else:
-            messages.success(request,('Invalid username or password'))
+            messages.error(request, 'Invalid username or password')
             return redirect('signin')
+    
     else:
-        return render(request,'signin.html',{})
-
+        return render(request, 'signin.html', {})
+    
 @never_cache
 @login_required
 def home(request):
     return render(request,'home.html',{})
+
+@never_cache
+@login_required
+def admin_dashboard(request):
+    if not request.user.is_superuser:  
+        return redirect('home')
+    return render(request, 'dashboard.html')
 
 @never_cache
 def signout_view(request):
@@ -81,22 +93,24 @@ def signup_view(request):
     return render(request, "signup.html", context)
 
 @never_cache
-def verify_view(request, user_id=None):  # `user_id` is passed in the URL or session
+def verify_view(request, user_id=None):  
+    # user_id is passed in the URL or session
     # Fetch user using the user_id passed to the view
     try:
-        user = User.objects.get(id=user_id)  # Assuming the user_id is passed
+        user = User.objects.get(id=user_id) 
+        # Assuming the user_id is passed
     except User.DoesNotExist:
         messages.error(request, "Invalid or expired link!")
-        return redirect('signup')  # Or any other fallback page
+        return redirect('signup')
 
-    # Ensure OTP is generated and sent during sign up
+   
     user_otp = OtpToken.objects.filter(user=user).last()
     form = OtpVerificationForm()
 
     if user_otp:
-        otp_expires_at = user_otp.otp_expires_at.isoformat()  # Format as ISO 8601
+        otp_expires_at = user_otp.otp_expires_at.isoformat() 
     else:
-        otp_expires_at = None  # Default to None if no OTP exists
+        otp_expires_at = None 
 
     if request.method == 'POST':
         otp_code = request.POST.get('otp_code')
@@ -110,11 +124,13 @@ def verify_view(request, user_id=None):  # `user_id` is passed in the URL or ses
                 user.save()
 
                 messages.success(request, "Account successfully activated! You can log in now.")
-                return redirect('signin')  # Redirect to a logged-in page or dashboard
+                return redirect('signin')  
+                # Redirect to a logged-in page or dashboard
             else:
                 # OTP expired
                 messages.warning(request, "The OTP has expired,request a new one.")
-                return redirect('verify', user_id=user_id)  # Stay on the OTP verification page
+                return redirect('verify', user_id=user_id)  
+                # Stay on the OTP verification page
         else:
             # Invalid OTP
             messages.warning(request, "Invalid OTP code. Please try again.")
@@ -126,11 +142,12 @@ def verify_view(request, user_id=None):  # `user_id` is passed in the URL or ses
 @never_cache
 def resend_view(request, user_id=None):
     try:
-        # Fetch user by user_id passed in URL
-        user = get_user_model().objects.get(id=user_id)  # Use get_user_model() to handle custom user models
+        
+        user = get_user_model().objects.get(id=user_id)  
+        # Use get_user_model() to handle custom user models
     except get_user_model().DoesNotExist:
         messages.error(request, "Invalid or expired link!")
-        return redirect('signup')  # Redirect to signup or any other fallback page
+        return redirect('signup') 
 
     # If OTP exists for the user, proceed with resending process
     user_otp = OtpToken.objects.filter(user=user, otp_expires_at__lt=timezone.now()).last()
@@ -154,7 +171,8 @@ def resend_view(request, user_id=None):
 
             # Generate new OTP for the user
             otp_token = OtpToken(user=user)
-            otp_code = otp_token.generate_otp()  # Generate the OTP and save it
+            otp_code = otp_token.generate_otp()  
+            
 
             subject = 'Your OTP verification code'
             message = f"""
@@ -164,7 +182,7 @@ def resend_view(request, user_id=None):
                 Best regards,\n
                 Team-SignatureSeconds
                         """
-            sender = 'misiriyayousuf369@gmail.com'  # Use appropriate sender email
+            sender = 'misiriyayousuf369@gmail.com' 
             reciever = [user.email]
 
             # Send OTP to the user's email
@@ -181,7 +199,8 @@ def resend_view(request, user_id=None):
         else:
             # If form is invalid, show a warning message
             messages.warning(request, "There was an issue with the form.")
-            return redirect('resend', user_id=user.id)  # Corrected here
+            return redirect('resend', user_id=user.id)  
 
     context = {"form": form}
     return render(request, "resend.html", context)
+

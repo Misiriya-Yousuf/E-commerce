@@ -1,150 +1,128 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Product Details</title>
-  <!-- Bootstrap and Font Awesome -->
-  <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
-  <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/product_details.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link href="{% static 'css/style.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />
   <link 
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" 
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" 
     rel="stylesheet">
-  <style>
-    .footer {
-        background-color: #343a40;
-        color: white;
-        padding: 40px 0;
-      }
-      .footer a {
-        color: #adb5bd;
-        text-decoration: none;
-      }
-      .footer a:hover {
-        color: white;
-      }
-      .social-icons a {
-        font-size: 1.5rem;
-        margin: 0 10px;
-      }
-      .newsletter-input {
-        max-width: 400px;
-      }
-    .product-container {
-      margin-top: 50px;
-    }
-
-    .small-img-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .small-img-col img {
-      cursor: pointer;
-      border: 1px solid #ddd;
-      padding: 5px;
-      border-radius: 5px;
-    }
-
-    .product-details {
-      padding: 20px;
-    }
-
-    .btn-cart {
-      background-color: #5cb85c;
-      color: white;
-      padding: 10px 20px;
-      text-decoration: none;
-      border-radius: 5px;
-      font-size: 16px;
-    }
-
-    .btn-cart:hover {
-      background-color: #4cae4c;
-    }
-  </style>
+  <link 
+    rel="stylesheet" 
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
-
 <body>
-  <header class="header_section">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light p-0">
-        <a class="navbar-brand" href="{% url 'home' %}">
-            <span style="font-size: 18px; margin-left:8px;  color: purple;">Signature Seconds</span>
-        </a>
-        <div class="mx-auto text-center" style="position: absolute; left: 50%; transform: translateX(-50%);">
-          {% if messages %}
-              <div class="error-messages">
-                  {% for message in messages %}
-                      <h6 class="{{ message.tags }}" style="margin: 0; color: green;">{{ message }}</h6>
-                  {% endfor %}
-              </div>
-          {% endif %}
-      </div>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item ">
-                    <a class="nav-link" href="{% url 'home' %}"><b>Home</b></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'products' %}"><b>Products</b></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <b>Cart</b><i class="fa fa-shopping-cart ml-1" aria-hidden="true"style="font-size: 12px; height: 12px;"></i>
-                    </a>
-                </li>
-                {% if user.is_authenticated %}
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'signout' %}"><b>signout</b><i class="fa-solid fa-power-off ml-1" style="font-size: 12px; height: 12px;"></i></a>
-              </li>
-                {% endif %}
-            </ul>
+  <div class="container">
+    <div class="product-container">
+      <!-- Left Section: images -->
+      <div class="product-images">
+        <nav class="breadcrumb">
+          <a href="{% url 'home' %}">Home</a> &gt; <a href="{% url 'products' %}">Products</a> &gt; <span>Product Details</span>
+        </nav>
+        <!-- Main Image in a Box -->
+        <div class="main-image-box">
+          <img id="mainImage" src="{% static 'images/w3.png' %}" alt="Main Product Image">
         </div>
-    </nav>
-</header>
+      
+        <!-- Variant Images Below -->
+        <div class="variant-images">
+          <img src="{% static 'images/w3.png' %}" alt="Variant Image" onclick="changeImage(this)">
+          <img src="{% static 'images/w4.png' %}" alt="Variant Image" onclick="changeImage(this)">
+          <img src="{% static 'images/w3.png' %}" alt="Variant Image" onclick="changeImage(this)">
+          <img src="{% static 'images/w4.png' %}" alt="Variant Image" onclick="changeImage(this)">
+        </div>
+      </div>
+      
 
-  <!-- Product Details Section -->
-  <div class="container product-container">
-    <div class="row">
-      <div class="col-md-2">
-        <img id="ProductImg" src="{% static 'images/w1.png' %}" alt="Product Image" width="100%">
-        <div class="small-img-row">
-          <div class="small-img-col">
-            <img src="{% static 'images/w1.png' %}" width="100%" onclick="changeImage(this)">
-          </div>
-          <div class="small-img-col">
-            <img src="{% static 'images/w2.png' %}" width="100%" onclick="changeImage(this)">
-          </div>
-          <div class="small-img-col">
-            <img src="{% static 'images/w3.png' %}" width="100%" onclick="changeImage(this)">
-          </div>
-          <div class="small-img-col">
-            <img src="{% static 'images/w4.png' %}" width="100%" onclick="changeImage(this)">
-          </div>
+      <!-- Right Section: Product Details -->
+      <div class="product-details">
+        <h2>Casual men's watch</h2>
+        <b>Orient O65SF0 Wactch - For Men</b>
+        <!-- Ratings -->
+        <div class="ratings">
+          <br>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star-half-alt"></i>
         </div>
-      </div>
-      <div class="col-md-6 product-details">
-        <p>Home / Watches</p>
-        <h1>Stylish Men's Watch</h1>
-        <h4>$300</h4>
-        <select class="form-select w-50 my-3">
-          <option>Select Size</option>
-          <option>Small</option>
-          <option>Medium</option>
-          <option>Large</option>
-        </select>
-        <input type="number" value="1" class="form-control w-50 mb-3">
-        <a href="#" class="btn-cart" style="text-decoration: none;">Add To Cart</a>
-        <h3 class="mt-4">Product Details</h3>
-        <p>Elevate your style with our premium men's watch. Perfect for formal or casual settings, this watch is designed for modern men who value style and functionality.</p>
+
+        <!-- Price -->
+        <h4>$300 <span class="discount">$20 OFF</span></h4>
+
+        <!-- Stock Status -->
+        <p class="stock-status in-stock">In Stock</p>
+        <h3>Description</h3>
+        <p>Description about the watch</p>
+        <h6>HIGHLIGHTS</h6>
+        <ul>
+          <li>durable leather strap</li>
+          <li>Water-resistant </li>
+          <li>Display : Analog</li>
+          <li>Scratch resistant</li>
+        </ul>
+        <br>
+        <!-- Add to Cart Button -->
+        <button class="btn-cart">Add to Cart</button>
+        <div class="rightmost-feature">
+          <!-- Discount and Coupon Section -->
+          <div class="discount-coupon">
+            <h4>Discount</h4>
+            <p>Use code <strong>WATCH20</strong> at checkout for an additional 20% off!</p>
+          </div>
+        
+          <!-- Reviews Section -->
+          <div class="reviews">
+            <h4>Customer Reviews</h4>
+            <div class="review">
+              <p><strong>John Doe</strong> - 5 stars</p>
+              <p>"Great watch! The leather strap is very durable, and it's super stylish."</p>
+            </div>
+            <div class="review">
+              <p><strong>Jane Smith</strong> - 4 stars</p>
+              <p>"Nice design, but the watch could be a little more lightweight."</p>
+            </div>
+            <button class="btn-review">Write a Review</button>
+          </div>
+          </div>
+
       </div>
     </div>
+<div class="related-products">
+  <h3>Related Products</h3>
+  <div class="product-list">
+    <div class="product-item">
+      <img src="{% static 'images/w1.png' %}" alt="Product 1">
+      <p>Elegant Men's Watch</p>
+      <span>$250</span>
+      <button class="btn-details">Details</button>
+    </div>
+    <div class="product-item">
+      <img src="{% static 'images/w2.png' %}" alt="Product 2">
+      <p>Sporty Digital Watch</p>
+      <span>$180</span>
+      <button class="btn-details">Details</button>
+    </div>
+    <div class="product-item">
+      <img src="{% static 'images/w3.png' %}" alt="Product 3">
+      <p>Classic Women's Watch</p>
+      <span>$200</span>
+      <button class="btn-details">Details</button>
+    </div>
   </div>
+</div>
 
-  <!-- Footer -->
+
+  </div>
   <footer class="footer">
     <div class="container">
       <div class="row">
@@ -190,12 +168,11 @@
       </div>
     </div>
   </footer>
-  <!-- JavaScript -->
+
   <script>
-    function changeImage(smallImg) {
-      document.getElementById("ProductImg").src = smallImg.src;
+    function changeImage(element) {
+      document.getElementById("mainImage").src = element.src;
     }
   </script>
 </body>
-
 </html>

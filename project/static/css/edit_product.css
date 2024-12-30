@@ -1,0 +1,95 @@
+body {
+    display: flex;
+}
+.sidebar {
+    width: 250px;
+    color: white;
+    height: 100vh;
+    position: fixed;
+    padding-top: 20px;
+    background-color: #343a40;
+}
+.sidebar a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 10px 20px;
+    transition: background-color 0.3s;
+}
+.sidebar a:hover {
+    background-color: #8d8888;
+}
+.sidebar .dropdown-menu {
+    background-color: #8d8888;
+}
+.content {
+    margin-left: 250px;
+    width: 100%;
+    padding: 20px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+.navbar {
+    border: 1px solid #fff;
+    border-radius: 5px;
+}
+.navbar-brand {
+    padding-top: 20px;
+    color: white;
+    font-size: 20px;
+    font-weight: 600;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.nav-link {
+    text-decoration: none; 
+    color: white;
+}
+.nav-link:hover {
+    color: white; 
+    transition: all 0.3s ease; 
+}
+.form-container {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+.form-container h2 {
+    margin-bottom: 20px;
+    color: #343a40;
+    font-weight: 700;
+}
+.form-group {
+    margin-bottom: 20px;
+}
+label {
+    font-weight: bold;
+}
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 16px;
+}
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #80bdff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+.btn-success {
+    background-color: #28a745;
+    border: none;
+}
+.btn-secondary {
+    background-color: #6c757d;
+    border: none;
+}
+.btn:hover {
+    opacity: 0.9;
+}
+input[type="file"] {
+    padding: 5px;
+}

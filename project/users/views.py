@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.utils import timezone
 from . forms import RegisterForm,OtpVerificationForm,ResendOtpForm
+from customadmin.models import UserProfile,Product
 from . models import OtpToken
 from django.contrib.auth import get_user_model
 
@@ -25,13 +26,25 @@ def signin_view(request):
         user = authenticate(request, username=username, password=password)
         
         if user is not None:
+            try:
+                # Check if the user is blocked
+                user_profile = UserProfile.objects.get(user=user)
+                if user_profile.blocked:
+                    messages.error(request, "Your account has been blocked. You cannot log in.")
+                    return redirect('signin')
+            except UserProfile.DoesNotExist:
+                # If no profile exists for the user, we just proceed (assuming no blocking logic is set up)
+                pass
+            
+            # If the user is not blocked, proceed with login
             if user.is_superuser:  # Check if the user is an admin (superuser)
                 login(request, user)
                 return redirect('dashboard')
             else:
                 login(request, user)
-                messages.success(request, f"Welcome {user.username}, let's get started !!!")
+                messages.success(request, f"Welcome {user.username}, let's get started!!!")
                 return redirect('home')
+        
         else:
             messages.error(request, 'Invalid username or password')
             return redirect('signin')
@@ -47,9 +60,10 @@ def home(request):
 @never_cache
 @login_required
 def admin_dashboard(request):
+    products = Product.objects.all()  # Get all products
     if not request.user.is_superuser:  
         return redirect('home')
-    return render(request, 'dashboard.html')
+    return render(request, 'dashboard.html', {'products': products})
 
 @never_cache
 def signout_view(request):

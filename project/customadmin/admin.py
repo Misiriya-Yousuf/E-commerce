@@ -1,3 +1,8 @@
 from django.contrib import admin
+from .models import UserProfile,Product
 
-# Register your models here.
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'blocked')
+
+admin.site.register(UserProfile, UserProfileAdmin)
+admin.site.register(Product)

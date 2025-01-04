@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.utils import timezone
 from . forms import RegisterForm,OtpVerificationForm,ResendOtpForm
-from customadmin.models import UserProfile,Product
+from customadmin.models import UserProfile,Product,Category
 from . models import OtpToken
 from django.contrib.auth import get_user_model
 
@@ -63,7 +63,16 @@ def admin_dashboard(request):
     products = Product.objects.all()  # Get all products
     if not request.user.is_superuser:  
         return redirect('home')
-    return render(request, 'dashboard.html', {'products': products})
+     # Calculate counts
+    user_count = User.objects.count()
+    product_count = Product.objects.filter(is_deleted=False).count()
+    category_count = Category.objects.filter(is_trashed=False).count()
+
+    return render(request, 'dashboard.html', {
+        'user_count': user_count,
+        'product_count': product_count,
+        'category_count': category_count,
+        'products': products})
 
 @never_cache
 def signout_view(request):
@@ -83,9 +92,9 @@ def signup_view(request):
 
             subject = 'Your OTP verification code'
             message = f"""
-                        Hi {user.username},\n\n
+                        Hi {user.username},\n
                 Your OTP code is {otp_code}. It will expire in 2 minutes.\n
-                Please verify the OTP to activate your account!\n\n
+                Please verify the OTP to activate your account!\n
                 Best regards,\n
                 Team-SignatureSeconds 
 
@@ -190,9 +199,9 @@ def resend_view(request, user_id=None):
 
             subject = 'Your OTP verification code'
             message = f"""
-                        Hi {user.username},\n\n
+                        Hi {user.username},\n
                 Your OTP code is {otp_code}. It will expire in 2 minutes.\n
-                Please verify the OTP to activate your account!\n\n
+                Please verify the OTP to activate your account!\n
                 Best regards,\n
                 Team-SignatureSeconds
                         """
@@ -217,4 +226,3 @@ def resend_view(request, user_id=None):
 
     context = {"form": form}
     return render(request, "resend.html", context)
-

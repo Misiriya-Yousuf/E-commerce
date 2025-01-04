@@ -10,7 +10,8 @@
     <style>
         body {
             display: flex;
-           }
+            font-family: Arial, sans-serif;
+        }
         .sidebar {
             width: 250px;
             color: white;
@@ -26,18 +27,19 @@
             transition: background-color 0.3s;
         }
         .sidebar a:hover {
-            background-color:#8d8888;
+            background-color: #8d8888;
         }
         .sidebar .dropdown-menu {
-            background-color:#8d8888;
+            background-color: #8d8888;
         }
         .content {
             margin-left: 250px;
             width: 100%;
+            padding: 30px;
         }
         .navbar {
-          border: 1px solid #fff;
-          border-radius: 5px;
+            border: 1px solid #fff;
+            border-radius: 5px;
         }
         .navbar-brand {
             padding-top: 20px;
@@ -49,16 +51,62 @@
             transform: translateX(-50%);
         }
         .nav-link {
+            text-decoration: none; 
+            color: white; /* Change link color to white */
+        }
+        .nav-link:hover {
+            color: white; 
+            transition: all 0.3s ease; 
+        }
 
-          text-decoration: none; 
-          color: white;
-          
-      }
-      .nav-link:hover {
-          color: white; 
-          transition: all 0.3s ease; 
-      }
-      
+        .nav-link i {
+            color: white; /* Ensure the icon color is also white */
+        }
+        
+        .table {
+            width: 80%; /* Reduce table width */
+            margin: 30px auto; /* Center the table */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+        }
+        .table th, .table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .table tbody tr:hover {
+            background-color: #f5f5f5; /* Hover effect on rows */
+        }
+        .table th {
+            background-color: #343a40;
+            color: white;
+        }
+        .table td {
+            background-color: #ffffff;
+        }
+        .btn-sm {
+            padding: 5px 15px;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        .btn-success {
+            background-color: #28a745;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        .card {
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .alert-info {
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -73,27 +121,26 @@
             <a href="{% url 'list_product' %}" class="ps-4">List Products</a>
             <a href="{% url 'add_product' %}" class="ps-4">Add Product</a>
         </div>
-        <a href="#">Category Management</a>
+        <a href="{% url 'category_management' %}">Category Management</a>
     </div>
 
     <!-- Content -->
     <div class="content">
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <p class="navbar-brand">ADMIN PANEL</p>
+            <p class="navbar-brand">User Management</p>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
                     <li>
-                        <a class="nav-link" href="{% url 'signout' %}">signout&nbsp;<i class="fa-solid fa-power-off ml-1" style="font-size: 12px; height: 12px;"></i></a>
+                        <a class="nav-link" href="{% url 'signout' %}" style="color: #fff;">signout&nbsp;<i class="fa-solid fa-power-off ml-1" style="font-size: 12px; height: 12px;"></i></a>
                     </li>
                     {% endif %}
                 </ul>
             </div>
         </nav>
-        <!-- Main Content Placeholder -->
-        <div class="container mt-5">
-            <h2>User Management</h2>
+
+        <div class="container mt-5 card">
             <p class="lead">Manage all registered users. You can block or unblock users as needed.</p>
         
             <!-- Display Flash Messages -->

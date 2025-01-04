@@ -80,14 +80,14 @@
             <a href="{% url 'list_product' %}" class="ps-4">List Products</a>
             <a href="{% url 'add_product' %}" class="ps-4">Add Product</a>
         </div>
-        <a href="#">Category Management</a>
+        <a href="{% url 'category_management' %}">Category Management</a>
     </div>
 
     <!-- Content -->
     <div class="content">
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <p class="navbar-brand">ADMIN PANEL</p>
+            <p class="navbar-brand">Products List</p>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
@@ -117,12 +117,10 @@
                         <th>Sl. No</th>
                         <th>Product Name</th>
                         <th>Category</th>
-                        <th>Description</th>
                         <th>Sale Price</th>
-                        <th>Discount Price</th>
                         <th>Quantity</th>
                         <th>In Stock</th>
-                        <th>Main Image</th>
+                        <th>Details</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -132,9 +130,7 @@
                         <td>{{ forloop.counter }}</td>
                         <td>{{ product.name }}</td>
                         <td>{{ product.category }}</td>
-                        <td>{{ product.description }}</td>
                         <td>{{ product.sale_price }}</td>
-                        <td>{{ product.discount_price }}</td>
                         <td>{{ product.quantity }}</td>
                         <td>
                             {% if product.quantity > 0 %}
@@ -144,10 +140,9 @@
                             {% endif %}
                         </td>
                         <td>
-                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                        </td>
+                            <a href="{% url 'view_product' product.id %}" class="btn btn-primary btn-sm" style="width: 60px; color: #fff;">View</a>
+                        </td>                        
                         <td>
-                            <a href="{% url 'edit_product' product.id %}" class="btn btn-success btn-sm " style="width: 60px;color: #fff;">edit</a>
                             <form method="post" action="{% url 'delete_product' product.id %}" class="d-inline">
                                 {% csrf_token %}
                                 
@@ -164,12 +159,13 @@
             </table>
 
             {% if messages %}
-                <div class="alert alert-success">
-                    {% for message in messages %}
-                    <p>{{ message }}</p>
-                    {% endfor %}
-                </div>
+            <div class="alert alert-success">
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+            </div>
             {% endif %}
+
         </div>
     </div>
 

@@ -1,12 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.contrib import messages
 from .models import UserProfile 
 from .models import Product,Category
-from .forms import CategoryForm,ProductForm                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+from .forms import CategoryForm                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 from .models import ProductVariant,ProductImage
 
 # List all users for admin
@@ -86,6 +89,7 @@ def add_product(request):
         quantity = request.POST.get('quantity')
         description = request.POST.get('description')
         main_image_file = request.FILES.get('main_image')
+        coupon_code = request.POST.get('coupon')  # Get the coupon code from the form
 
         # Create main image and product
         main_image = ProductImage.objects.create(image=main_image_file, is_variant=False)
@@ -97,6 +101,7 @@ def add_product(request):
             quantity=quantity,
             description=description,
             main_image=main_image,
+            coupon_code=coupon_code
         )
 
         # Process variant images
@@ -114,6 +119,7 @@ def add_product(request):
 
     return render(request, 'add_product.html', {'categories': categories})
 
+
 @login_required
 def view_product(request, product_id):
     # Get the product object
@@ -128,12 +134,30 @@ def view_product(request, product_id):
     })
 
 @login_required
+@csrf_exempt
 def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     categories = Category.objects.all()
-    
+
     if request.method == 'POST':
-        # Process product details
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            data = json.loads(request.body)
+            image_type = data.get('type')
+            image_id = data.get('id')
+
+            try:
+                if image_type == 'main':  # Delete main image
+                    product.main_image.delete()
+                    product.main_image = None
+                    product.save()
+                elif image_type == 'variant':  # Delete variant image
+                    variant_image = ProductImage.objects.get(id=image_id)
+                    variant_image.delete()
+
+                return JsonResponse({'success': True})
+            except Exception as e:
+                return JsonResponse({'success': False, 'error': str(e)})
+            
         category = Category.objects.get(id=request.POST.get('category'))
         name = request.POST.get('name')
         sale_price = request.POST.get('sale_price')
@@ -141,28 +165,27 @@ def edit_product(request, product_id):
         quantity = request.POST.get('quantity')
         description = request.POST.get('description')
         main_image_file = request.FILES.get('main_image')
-        
-        # Update the main image
+        coupon_code = request.POST.get('coupon')
+
+        # Update main image
         if main_image_file:
             main_image = ProductImage.objects.create(image=main_image_file, is_variant=False)
             product.main_image = main_image
-        
-        # Update product details
+
+        # Update product fields
         product.category = category
         product.name = name
         product.sale_price = sale_price
         product.discount_price = discount_price
         product.quantity = quantity
         product.description = description
-        
-        # Save updated product
+        product.coupon_code = coupon_code  # Fix tuple issue
         product.save()
 
-        # Process variant images if they are provided
+        # Handle variant images
         variant_images_files = request.FILES.getlist('variant_images_upload')
         if variant_images_files:
-            # Create or update product variants
-            product_variant, created = ProductVariant.objects.get_or_create(product=product)
+            product_variant, _ = ProductVariant.objects.get_or_create(product=product)
             for image_file in variant_images_files:
                 variant_image = ProductImage.objects.create(image=image_file, is_variant=True)
                 product_variant.variant_images.add(variant_image)
@@ -171,15 +194,11 @@ def edit_product(request, product_id):
         messages.success(request, f'Product "{product.name}" was updated successfully!')
         return redirect('list_product')
 
-    else:
-        # If it's a GET request, pre-populate the form with existing product data
-        form = ProductForm(instance=product)
-
     return render(request, 'edit_product.html', {
-        'form': form,
         'categories': categories,
         'product': product
     })
+
 
 @login_required
 def update_stock(request, product_id):

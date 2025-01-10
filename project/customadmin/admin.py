@@ -9,9 +9,16 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 # Product Admin
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'sale_price', 'quantity', 'is_deleted')  # Show important fields
-    list_filter = ('category', 'is_deleted')  # Add filters for categories and deletion status
-    search_fields = ('name', 'category__name')  # Add search by product name and category name
+    fields = ['category', 'name', 'description', 'sale_price', 'discount_price', 'coupon_code', 'quantity', 'main_image', 'is_deleted']
+    list_display = ['name', 'category', 'sale_price', 'coupon_code', 'quantity', 'is_deleted']
+    list_filter = ('category', 'is_deleted')  
+    search_fields = ('name', 'category__name') 
+
+    def clean_coupon_code(self):
+        coupon_code = self.cleaned_data.get('coupon_code')
+        if not coupon_code:
+            return None  
+        return coupon_code
 
 
 # ProductVariant Admin

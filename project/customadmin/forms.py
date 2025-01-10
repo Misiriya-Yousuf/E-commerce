@@ -1,4 +1,5 @@
 from django import forms
+from decimal import Decimal, InvalidOperation
 from .models import Product,Category,ProductImage
 from django import forms
 from .models import Category
@@ -27,6 +28,7 @@ class ProductImageForm(forms.ModelForm):
 
 class ProductForm(forms.ModelForm):
     main_image_upload = forms.ImageField(required=False, label="Main Image Upload")
+
     class Meta:
         model = Product
         fields = ['category', 'name', 'description', 'sale_price', 'discount_price', 'quantity', 'main_image']
@@ -42,17 +44,42 @@ class ProductForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Customize the category dropdown to show only active categories
         self.fields['category'].queryset = Category.objects.filter(is_trashed=False)
-       
+
     def clean_sale_price(self):
         sale_price = self.cleaned_data.get('sale_price')
-        if sale_price is not None and sale_price <= 0:
-            raise forms.ValidationError("Sale price must be greater than zero.")
+        
+        # Ensure there is no extra whitespace
+        if sale_price:
+            sale_price = sale_price.strip()
+
+        if not sale_price:
+            raise forms.ValidationError("Sale price is required.")
+
+        try:
+            # Try to convert the sale price to Decimal
+            sale_price = Decimal(sale_price)
+            if sale_price <= 0:
+                raise forms.ValidationError("Sale price must be greater than zero.")
+        except (ValueError, InvalidOperation):
+            raise forms.ValidationError("Sale price must be a valid decimal number.")
+        
         return sale_price
 
     def clean_discount_price(self):
         discount_price = self.cleaned_data.get('discount_price')
-        if discount_price is not None and discount_price <= 0:
-            raise forms.ValidationError("Discount price must be greater than zero.")
+
+        # Ensure there is no extra whitespace
+        if discount_price:
+            discount_price = discount_price.strip()
+
+        if discount_price:
+            try:
+                # Try to convert the discount price to Decimal
+                discount_price = Decimal(discount_price)
+                if discount_price <= 0:
+                    raise forms.ValidationError("Discount price must be greater than zero.")
+            except (ValueError, InvalidOperation):
+                raise forms.ValidationError("Discount price must be a valid decimal number.")
+        
         return discount_price
